@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// --- 1. KHOI TAO STRUCT ---
+// ---  KHOI TAO STRUCT MANG TU DONG  ---
 typedef struct { int ngay, thang, nam; } Ngay;
 
 typedef struct {
@@ -63,12 +63,14 @@ int soSanhNgay(Ngay n1, Ngay n2) {
 void khoiTaoDuLieu() {
     dsDV[slDV++] = (DichVuBaoDuong){1, "Rua xe bot tuyet", 50000, 999, 0};
     dsDV[slDV++] = (DichVuBaoDuong){2, "Thay nhot ban tong hop", 120000, 50, 0};
-    dsDV[slDV++] = (DichVuBaoDuong){3, "Thay bugi", 80000, 5, 0}; // Ton kho thap de test
+    dsDV[slDV++] = (DichVuBaoDuong){3, "Thay bugi", 80000, 8, 0}; 
     dsDV[slDV++] = (DichVuBaoDuong){4, "Bao duong noi", 200000, 30, 0};
-    dsDV[slDV++] = (DichVuBaoDuong){5, "Day curoa", 350000, 8, 0};
+    dsDV[slDV++] = (DichVuBaoDuong){5, "Day curoa", 350000, 15, 0};
+    dsDV[slDV++] = (DichVuBaoDuong){6, "Xuc binh xang",100000,30,0};
+    dsDV[slDV++] = (DichVuBaoDuong){7, "Thay banh xe",500000,50,0};
 }
 
-// --- 2. THUAT TOAN TIM KIEM ---
+// --- TIM KIEM ---
 int timKhachHangTheoSDT(char* sdt) {
     for(int i=0; i<slKH; i++) {
         if(strcmp(dsKH[i].sdt, sdt) == 0) return i;
@@ -83,7 +85,7 @@ int timXeTheoBienSo(char* bienSo) {
     return -1;
 }
 
-// --- 3. NGHIEP VU CO BAN ---
+// ---  NGHIEP VU CO BAN ---
 void tiepNhanXe() {
     printf("--- TIEP NHAN XE ---");
     char sdt[15], bienSo[20];
@@ -229,7 +231,7 @@ void thanhToanVaInHoaDon() {
     printf("Khong co phieu nao dang cho thanh toan cua xe: %s", bienSo);
 }
 
-// --- 4. THUAT TOAN SAP XEP ---
+// --- SAP XEP ---
 void sapXepLichBaoDuong() {
     printf("--- LICH HEN BAO DUONG (Sap xep theo ngay) ---");
     PhieuSuaChua mangTam[100];
@@ -263,7 +265,7 @@ void sapXepLichBaoDuong() {
     if (count == 0) printf("Chua co lich hen nao!");
 }
 
-// --- 5. THONG KE ---
+// ---  THONG KE ---
 void thongKePhuTung() {
     printf("--- THONG KE PHU TUNG CAN THAY & DA THAY THE ---");
     printf("%-25s | %-12s | %-12s", "Ten Phu Tung/Dich Vu", "Da thay the", "Ton Kho (Can)");
@@ -274,7 +276,7 @@ void thongKePhuTung() {
     }
 }
 
-// --- HAM MAIN (MENU) ---
+// ---  (MENU) ---
 int main() {
     khoiTaoDuLieu();
     int chon;
