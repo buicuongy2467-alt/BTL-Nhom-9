@@ -40,6 +40,7 @@ typedef struct {
     int soChiTiet;
     long tongTien;
     int trangThai; // 0: Dang xu ly, 1: Da hoan thanh (thanh toan)
+    int tonKhoDaTru;
 } PhieuSuaChua;
 
 // --- MANG TOAN CUC VA BIEN DEM ---
@@ -145,6 +146,7 @@ void lapPhieuDichVu() {
     phieu.soChiTiet = 0;
     phieu.tongTien = 0;
     phieu.trangThai = 0; // Dang xu ly
+    phieu.tonKhoDaTru = 0;
 
     printf("Nhap ngay lap (dd mm yyyy): ");
     scanf("%d %d %d", &phieu.ngayLap.ngay, &phieu.ngayLap.thang, &phieu.ngayLap.nam);
@@ -181,6 +183,7 @@ void lapPhieuDichVu() {
         }
     } while (chon != 0);
 
+    phieu.tonKhoDaTru = 1;
     dsPhieu[slPhieu++] = phieu;
     printf("\nLap phieu thanh cong.\n");
     printf("Ma phieu: %d\n", phieu.id);
@@ -201,7 +204,40 @@ void thanhToanVaInHoaDon() {
             printf("Tong tien: %ld VND\n", dsPhieu[i].tongTien);
             printf("Nhap 1 de xac nhan thanh toan (so khac de huy): ");
             int xacNhan; scanf("%d", &xacNhan);
-            if(xacNhan != 1) return;
+            if(xacNhan != 1) {
+                if (dsPhieu[i].tonKhoDaTru) {
+                    for(int j=0; j<dsPhieu[i].soChiTiet; j++) {
+                        int idDV = dsPhieu[i].dsChiTiet[j].idDichVu;
+                        dsDV[idDV-1].tonKho += dsPhieu[i].dsChiTiet[j].soLuong;
+                    }
+                    dsPhieu[i].tonKhoDaTru = 0;
+                    printf("Da huy thanh toan. Ton kho da duoc hoan lai; phieu van cho thanh toan.\n");
+                } else {
+                    printf("Da huy thanh toan. Phieu van duoc giu lai.\n");
+                }
+                return;
+            }
+
+            if (!dsPhieu[i].tonKhoDaTru) {
+                for(int d=0; d<slDV; d++) {
+                    int soLuongCan = 0;
+                    for(int j=0; j<dsPhieu[i].soChiTiet; j++) {
+                        if (dsPhieu[i].dsChiTiet[j].idDichVu == d + 1) {
+                            soLuongCan += dsPhieu[i].dsChiTiet[j].soLuong;
+                        }
+                    }
+                    if (dsDV[d].tonKho < soLuongCan) {
+                        printf("Khong du ton kho cho '%s'. Phieu van cho thanh toan.\n",
+                               dsDV[d].tenPhuTung);
+                        return;
+                    }
+                }
+                for(int j=0; j<dsPhieu[i].soChiTiet; j++) {
+                    int idDV = dsPhieu[i].dsChiTiet[j].idDichVu;
+                    dsDV[idDV-1].tonKho -= dsPhieu[i].dsChiTiet[j].soLuong;
+                }
+                dsPhieu[i].tonKhoDaTru = 1;
+            }
 
             printf("Nhap ngay hen bao duong tiep theo (dd mm yyyy): ");
             scanf("%d %d %d", &dsPhieu[i].ngayHen.ngay, &dsPhieu[i].ngayHen.thang, &dsPhieu[i].ngayHen.nam);
