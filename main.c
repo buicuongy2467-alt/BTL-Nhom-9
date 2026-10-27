@@ -85,7 +85,9 @@ int timXeTheoBienSo(char* bienSo) {
 
 // --- 3. NGHIEP VU CO BAN ---
 void tiepNhanXe() {
-    printf("\n--- TIEP NHAN XE ---\n");
+    printf("\n================================================\n");
+    printf("                    TIEP NHAN XE\n");
+    printf("================================================\n");
     char sdt[15], bienSo[20];
     
     printf("Nhap SDT khach hang: ");
@@ -93,7 +95,8 @@ void tiepNhanXe() {
     
     int idxKH = timKhachHangTheoSDT(sdt);
     if (idxKH == -1) {
-        printf("-> Khach hang moi! Nhap ten KH: ");
+        printf("Khach hang moi.\n");
+        printf("Nhap ten khach hang: ");
         fgets(dsKH[slKH].ten, sizeof(dsKH[slKH].ten), stdin);
         xoaXuongDong(dsKH[slKH].ten);
         strcpy(dsKH[slKH].sdt, sdt);
@@ -101,33 +104,36 @@ void tiepNhanXe() {
         idxKH = slKH;
         slKH++;
     } else {
-        printf("-> Khach hang cu: %s\n", dsKH[idxKH].ten);
+        printf("Khach hang hien co: %s\n", dsKH[idxKH].ten);
     }
 
     printf("Nhap bien so xe: ");
     fgets(bienSo, sizeof(bienSo), stdin); xoaXuongDong(bienSo);
     int idxXe = timXeTheoBienSo(bienSo);
     if (idxXe == -1) {
-        printf("-> Xe chua luu tren he thong! Nhap dong xe: ");
+        printf("Xe chua co trong he thong.\n");
+        printf("Nhap dong xe: ");
         fgets(dsXe[slXe].dongXe, sizeof(dsXe[slXe].dongXe), stdin);
         xoaXuongDong(dsXe[slXe].dongXe);
         strcpy(dsXe[slXe].bienSo, bienSo);
         dsXe[slXe].idKhachHang = dsKH[idxKH].id;
         slXe++;
-        printf("Tiep nhan xe THANH CONG!\n");
+        printf("\nTiep nhan xe thanh cong.\n");
     } else {
-        printf("-> Xe da ton tai trong he thong.\n");
+        printf("Bien so xe da ton tai trong he thong.\n");
     }
 }
 
 void lapPhieuDichVu() {
-    printf("\n--- LAP PHIEU DICH VU ---\n");
+    printf("\n================================================\n");
+    printf("                 LAP PHIEU DICH VU\n");
+    printf("================================================\n");
     char bienSo[20];
     printf("Nhap bien so xe can lap phieu: ");
     fflush(stdin); fgets(bienSo, sizeof(bienSo), stdin); xoaXuongDong(bienSo);
     
     if (timXeTheoBienSo(bienSo) == -1) {
-        printf("Khong tim thay xe! Vui long tiep nhan xe (Muc 1) truoc.\n");
+        printf("Khong tim thay xe. Vui long tiep nhan xe truoc.\n");
         return;
     }
 
@@ -143,13 +149,14 @@ void lapPhieuDichVu() {
 
     int chon;
     do {
-        printf("\n%-4s | %-30s | %-12s | %-10s\n", "Ma", "Dich vu / phu tung", "Don gia", "Ton kho");
-        printf("-----+--------------------------------+--------------+----------\n");
+        printf("\n%-4s | %-30s | %-16s | %-10s\n",
+               "Ma", "Dich vu / phu tung", "Don gia", "Ton kho");
+        printf("-----+--------------------------------+------------------+-----------\n");
         for(int i=0; i<slDV; i++) {
-            printf("%-4d | %-30s | %9ld VND | %8d\n",
+            printf("%-4d | %-30s | %11ld VND | %10d\n",
                    dsDV[i].id, dsDV[i].tenPhuTung, dsDV[i].donGia, dsDV[i].tonKho);
         }
-        printf("Nhap ma phu tung (0 de hoan tat): ");
+        printf("\nNhap ma dich vu / phu tung (0 de hoan tat): ");
         scanf("%d", &chon);
         
         if (chon > 0 && chon <= slDV) {
@@ -173,11 +180,15 @@ void lapPhieuDichVu() {
     } while (chon != 0);
 
     dsPhieu[slPhieu++] = phieu;
-    printf("\nLap phieu THANH CONG.\nTong tien tam tinh: %ld VND\n", phieu.tongTien);
+    printf("\nLap phieu thanh cong.\n");
+    printf("Ma phieu: %d\n", phieu.id);
+    printf("Tong tien tam tinh: %ld VND\n", phieu.tongTien);
 }
 
 void thanhToanVaInHoaDon() {
-    printf("\n--- THANH TOAN & IN HOA DON ---\n");
+    printf("\n================================================\n");
+    printf("              THANH TOAN VA IN HOA DON\n");
+    printf("================================================\n");
     char bienSo[20];
     printf("Nhap bien so xe can thanh toan: ");
     fflush(stdin); fgets(bienSo, sizeof(bienSo), stdin); xoaXuongDong(bienSo);
@@ -186,7 +197,7 @@ void thanhToanVaInHoaDon() {
         // Tim phieu cua xe dang trong trang thai cho thanh toan (0)
         if (strcmp(dsPhieu[i].bienSo, bienSo) == 0 && dsPhieu[i].trangThai == 0) {
             printf("Tong tien: %ld VND\n", dsPhieu[i].tongTien);
-            printf("Nhap 1 de xac nhan thanh toan: ");
+            printf("Nhap 1 de xac nhan thanh toan (so khac de huy): ");
             int xacNhan; scanf("%d", &xacNhan);
             if(xacNhan != 1) return;
 
@@ -206,28 +217,29 @@ void thanhToanVaInHoaDon() {
             sprintf(tenFile, "HoaDon_%s_Phieu%d.txt", bienSo, dsPhieu[i].id);
             FILE *f = fopen(tenFile, "w");
             if (f != NULL) {
-                fprintf(f, "===============================================\n");
-                fprintf(f, "             HOA DON DICH VU XE MAY\n");
-                fprintf(f, "===============================================\n");
+                fprintf(f, "===============================================================\n");
+                fprintf(f, "                  HOA DON DICH VU XE MAY\n");
+                fprintf(f, "===============================================================\n");
                 fprintf(f, "Ma phieu: %d\n", dsPhieu[i].id);
                 fprintf(f, "Bien so xe: %s\n", dsPhieu[i].bienSo);
                 fprintf(f, "Ngay lap: %02d/%02d/%04d\n", dsPhieu[i].ngayLap.ngay,
                         dsPhieu[i].ngayLap.thang, dsPhieu[i].ngayLap.nam);
-                fprintf(f, "-----------------------------------------------\n");
-                fprintf(f, "STT | Ten dich vu / phu tung       | SL | Thanh tien\n");
-                fprintf(f, "----+------------------------------+----+------------\n");
+                fprintf(f, "---------------------------------------------------------------\n");
+                fprintf(f, "%-4s | %-30s | %-5s | %15s\n",
+                        "STT", "Dich vu / phu tung", "SL", "Thanh tien");
+                fprintf(f, "-----+--------------------------------+-------+----------------\n");
                 for(int j=0; j<dsPhieu[i].soChiTiet; j++) {
                     int id = dsPhieu[i].dsChiTiet[j].idDichVu - 1;
-                    fprintf(f, "%-3d | %-28s | %-2d | %ld VND\n", j+1,
+                    fprintf(f, "%-4d | %-30s | %-5d | %11ld VND\n", j+1,
                             dsDV[id].tenPhuTung, dsPhieu[i].dsChiTiet[j].soLuong,
                             dsPhieu[i].dsChiTiet[j].thanhTien);
                 }
-                fprintf(f, "-----------------------------------------------\n");
+                fprintf(f, "---------------------------------------------------------------\n");
                 fprintf(f, "TONG CONG: %ld VND\n", dsPhieu[i].tongTien);
                 fprintf(f, "Lich hen bao duong ky sau: %02d/%02d/%04d\n",
                         dsPhieu[i].ngayHen.ngay, dsPhieu[i].ngayHen.thang,
                         dsPhieu[i].ngayHen.nam);
-                fprintf(f, "===============================================\n");
+                fprintf(f, "===============================================================\n");
                 fclose(f);
                 printf("=> THANH TOAN XONG!\nDa xuat hoa don ra file: '%s'\n", tenFile);
             } else {
@@ -241,7 +253,9 @@ void thanhToanVaInHoaDon() {
 
 // --- 4. THUAT TOAN SAP XEP ---
 void sapXepLichBaoDuong() {
-    printf("\n--- LICH HEN BAO DUONG (SAP XEP THEO NGAY) ---\n");
+    printf("\n================================================\n");
+    printf("          LICH HEN BAO DUONG (THEO NGAY)\n");
+    printf("================================================\n");
     PhieuSuaChua mangTam[100];
     int count = 0;
     
@@ -276,12 +290,14 @@ void sapXepLichBaoDuong() {
 
 // --- 5. THONG KE ---
 void thongKePhuTung() {
-    printf("\n--- THONG KE DICH VU / PHU TUNG ---\n");
-    printf("%-28s | %-12s | %-10s | %s\n",
-           "Ten dich vu / phu tung", "Da thay", "Ton kho", "Ghi chu");
-    printf("-----------------------------+--------------+------------+----------------\n");
+    printf("\n================================================\n");
+    printf("          THONG KE DICH VU VA PHU TUNG\n");
+    printf("================================================\n");
+    printf("%-30s | %-12s | %-10s | %-14s\n",
+           "Dich vu / phu tung", "Da thay", "Ton kho", "Trang thai");
+    printf("-------------------------------+--------------+------------+---------------\n");
     for(int i=0; i<slDV; i++) {
-        printf("%-28s | %-12d | %-10d | %s\n",
+        printf("%-30s | %-12d | %-10d | %-14s\n",
                dsDV[i].tenPhuTung, dsDV[i].daThayThe, dsDV[i].tonKho,
                dsDV[i].tonKho < 10 ? "Can nhap them" : "Du ton");
     }
@@ -292,9 +308,9 @@ int main() {
     khoiTaoDuLieu();
     int chon;
     do {
-        puts("\n==============================================");
-        puts("      QUAN LY TIEM RUA & BAO DUONG XE MAY");
-        puts("==============================================");
+        puts("\n================================================");
+        puts("       QUAN LY TIEM RUA & BAO DUONG XE MAY");
+        puts("================================================");
         puts("  1. Tiep nhan xe");
         puts("  2. Lap phieu dich vu / phu tung");
         puts("  3. Thanh toan va xuat hoa don");
