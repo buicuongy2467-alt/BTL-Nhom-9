@@ -51,7 +51,9 @@ PhieuSuaChua dsPhieu[100]; int slPhieu = 0;
 // --- HAM TIEN ICH ---
 void xoaXuongDong(char x[]) {
     size_t len = strlen(x);
-    if (len > 0 && x[len - 1] == ' ') x[len - 1] = ' ';
+    while (len > 0 && (x[len - 1] == '\n' || x[len - 1] == '\r')) {
+        x[--len] = '\0';
+    }
 }
 
 int soSanhNgay(Ngay n1, Ngay n2) {
