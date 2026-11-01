@@ -113,7 +113,6 @@ void khoiTaoDuLieu() {
     moRongDanhSach();
     dsDV[slDV++] = (DichVuBaoDuong){5, "Day curoa", 350000, 8, 0, 0};
 }
-
 // --- 2. THUAT TOAN TIM KIEM ---
 int timKhachHangTheoSDT(char* sdt) {
     for(int i=0; i<slKH; i++) {
@@ -278,7 +277,7 @@ void lapPhieuDichVu() {
     printf("Nhap ngay lap (dd mm yyyy): ");
     scanf("%d %d %d", &phieu.ngayLap.ngay, &phieu.ngayLap.thang, &phieu.ngayLap.nam);
 
-    int chon;
+  int chon;
     do {
         printf("\n%-4s | %-30s | %-16s | %-10s | %-10s\n",
                "Ma", "Dich vu / phu tung", "Don gia", "Ton kho", "Loai");
@@ -290,7 +289,7 @@ void lapPhieuDichVu() {
         }
         printf("\nNhap ma dich vu / phu tung (0 de hoan tat): ");
         scanf("%d", &chon);
-        
+
         if (chon > 0 && chon <= slDV) {
             int sl;
             printf("Nhap so luong can dung: ");
@@ -483,6 +482,7 @@ void thongKePhuTung() {
                dsDV[i].loai == 0 ? "Phu tung" : "Dich vu",
                dsDV[i].loai == 0 ? (dsDV[i].tonKho < 10 ? "Can nhap them" : "Du ton") : "Khong gioi han");
     }
+    free(dsPhieu);
 }
 
 // --- GIAI PHONG BO NHO TRUOC KHI THOAT ---
