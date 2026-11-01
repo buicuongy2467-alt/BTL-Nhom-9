@@ -103,17 +103,16 @@ int soSanhNgay(Ngay n1, Ngay n2) {
 
 void khoiTaoDuLieu() {
     moRongDanhSach();
-    dsDV[slDV++] = (DichVuBaoDuong){1, "Rua xe bot tuyet", 50000, 999, 0, 1}; // Loai 1: Dich vu
+    dsDV[slDV++] = (DichVuBaoDuong){1, "Rua xe bot tuyet", 50000, 0, 0, 1}; // Loai 1: Dich vu (khong quan ly ton kho)
     moRongDanhSach();
     dsDV[slDV++] = (DichVuBaoDuong){2, "Thay nhot ban tong hop", 120000, 50, 0, 0}; // Loai 0: Phu tung
     moRongDanhSach();
     dsDV[slDV++] = (DichVuBaoDuong){3, "Thay bugi", 80000, 5, 0, 0};
     moRongDanhSach();
-    dsDV[slDV++] = (DichVuBaoDuong){4, "Bao duong noi", 200000, 30, 0, 1};
+    dsDV[slDV++] = (DichVuBaoDuong){4, "Bao duong noi", 200000, 0, 0, 1}; // Dich vu
     moRongDanhSach();
     dsDV[slDV++] = (DichVuBaoDuong){5, "Day curoa", 350000, 8, 0, 0};
 }
-
 // --- 2. THUAT TOAN TIM KIEM ---
 int timKhachHangTheoSDT(char* sdt) {
     for(int i=0; i<slKH; i++) {
@@ -306,15 +305,21 @@ void lapPhieuDichVu() {
     printf("Nhap ngay lap (dd mm yyyy): ");
     scanf("%d %d %d", &phieu.ngayLap.ngay, &phieu.ngayLap.thang, &phieu.ngayLap.nam);
 
-    int chon;
+  int chon;
     do {
         printf("\n%-4s | %-30s | %-16s | %-10s | %-10s\n",
                "Ma", "Dich vu / phu tung", "Don gia", "Ton kho", "Loai");
         printf("-----+--------------------------------+------------------+------------+------------\n");
         for(int i=0; i<slDV; i++) {
-            printf("%-4d | %-30s | %11ld VND | %10d | %-10s\n",
-                   dsDV[i].id, dsDV[i].tenPhuTung, dsDV[i].donGia, dsDV[i].tonKho,
-                   dsDV[i].loai == 0 ? "Phu tung" : "Dich vu");
+            if (dsDV[i].loai == 0) {
+                printf("%-4d | %-30s | %11ld VND | %10d | %-10s\n",
+                       dsDV[i].id, dsDV[i].tenPhuTung, dsDV[i].donGia,
+                       dsDV[i].tonKho, "Phu tung");
+            } else {
+                printf("%-4d | %-30s | %11ld VND | %10s | %-10s\n",
+                       dsDV[i].id, dsDV[i].tenPhuTung, dsDV[i].donGia,
+                       "-", "Dich vu");
+            }
         }
         printf("\nNhap ma dich vu / phu tung (0 de hoan tat): ");
         scanf("%d", &chon);
@@ -324,7 +329,9 @@ void lapPhieuDichVu() {
             printf("Nhap so luong can dung: ");
             scanf("%d", &sl);
 
-            if (dsDV[chon-1].loai == 1 || dsDV[chon-1].tonKho >= sl) {
+          if (sl <= 0) {
+                printf("=> LOI: So luong phai lon hon 0!\n");
+            } else if (dsDV[chon-1].loai == 1 || dsDV[chon-1].tonKho >= sl) {
                 if (phieu.soChiTiet >= phieu.capacityChiTiet) {
                     phieu.capacityChiTiet *= 2;
                     ChiTietSuaChua *temp = (ChiTietSuaChua*)realloc(phieu.dsChiTiet, phieu.capacityChiTiet * sizeof(ChiTietSuaChua));
@@ -503,16 +510,18 @@ void thongKePhuTung() {
     printf("%-30s | %-12s | %-10s | %-10s | %-14s\n",
            "Dich vu / phu tung", "Da thay", "Ton kho", "Loai", "Trang thai");
     printf("-------------------------------+--------------+------------+------------+---------------\n");
-    for(int i=0; i<slDV; i++) {
-        printf("%-30s | %-12d | %-10d | %-10s | %-14s\n",
-               dsDV[i].tenPhuTung,
-               dsDV[i].loai == 0 ? dsDV[i].daThayThe : 0,
-               dsDV[i].loai == 0 ? dsDV[i].tonKho : -1,
-               dsDV[i].loai == 0 ? "Phu tung" : "Dich vu",
-               dsDV[i].loai == 0 ? (dsDV[i].tonKho < 10 ? "Can nhap them" : "Du ton") : "Khong gioi han");
+ for(int i=0; i<slDV; i++) {
+        if (dsDV[i].loai == 0) {
+            printf("%-30s | %-12d | %-10d | %-10s | %-14s\n",
+                   dsDV[i].tenPhuTung, dsDV[i].daThayThe, dsDV[i].tonKho,
+                   "Phu tung", dsDV[i].tonKho < 10 ? "Can nhap them" : "Du ton");
+        } else {
+            // Dich vu: khong tinh "da thay", khong quan ly ton kho
+            printf("%-30s | %-12s | %-10s | %-10s | %-14s\n",
+                   dsDV[i].tenPhuTung, "-", "-", "Dich vu", "Khong ton kho");
+        }
     }
 }
-
 // --- GIAI PHONG BO NHO TRUOC KHI THOAT ---
 void giaiPhongBoNho() {
     free(dsKH);
