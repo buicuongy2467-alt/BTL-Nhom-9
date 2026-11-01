@@ -455,14 +455,37 @@ void sapXepLichBaoDuong() {
         }
     }
 
-    printf("%-12s | %-12s | %-10s\n", "Ngay hen", "Bien so", "Ma phieu");
-    printf("-------------+--------------+-----------\n");
-    for(int i=0; i<count; i++) {
-        printf("%02d/%02d/%04d | %-12s | %-10d\n",
-            mangTam[i].ngayHen.ngay, mangTam[i].ngayHen.thang, mangTam[i].ngayHen.nam, 
-            mangTam[i].bienSo, mangTam[i].id);
+   if (count == 0) {
+        printf("Chua co lich hen nao.\n");
+        free(mangTam);
+        return;
     }
-    if (count == 0) printf("Chua co lich hen nao.\n");
+
+    // Lay ngay he thong de so sanh va thong bao tinh trang
+    Ngay homNay = layNgayHienTai();
+    printf("Ngay he thong: %02d/%02d/%04d\n\n", homNay.ngay, homNay.thang, homNay.nam);
+    printf("%-12s | %-12s | %-10s | %-15s\n", "Ngay hen", "Bien so", "Ma phieu", "Tinh trang");
+    printf("-------------+--------------+------------+----------------\n");
+
+    for(int i = 0; i < count; i++) {
+        int cmp = soSanhNgay(mangTam[i].ngayHen, homNay);
+        char tinhTrang[20];
+
+        if (cmp < 0) {
+            strcpy(tinhTrang, "QUA HAN");
+        } else if (cmp == 0) {
+            strcpy(tinhTrang, "HOM NAY");
+        } else if (cmp <= 3) {
+            strcpy(tinhTrang, "SAP DEN HAN");
+        } else {
+            strcpy(tinhTrang, "Chua den han");
+        }
+
+        printf("%02d/%02d/%04d | %-12s | %-10d | %-15s\n",
+               mangTam[i].ngayHen.ngay, mangTam[i].ngayHen.thang, mangTam[i].ngayHen.nam, 
+               mangTam[i].bienSo, mangTam[i].id, tinhTrang);
+    }
+
     free(mangTam);
 }
 
