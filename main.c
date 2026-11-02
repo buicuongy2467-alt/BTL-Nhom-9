@@ -505,7 +505,6 @@ void thongKePhuTung() {
                dsDV[i].loai == 0 ? "Phu tung" : "Dich vu",
                dsDV[i].loai == 0 ? (dsDV[i].tonKho < 10 ? "Can nhap them" : "Du ton") : "Khong gioi han");
     }
-    free(dsPhieu);
 }
 
 // --- GIAI PHONG BO NHO TRUOC KHI THOAT ---
@@ -517,6 +516,101 @@ void giaiPhongBoNho() {
         free(dsPhieu[i].dsChiTiet);
     }
     free(dsPhieu);
+}
+// --- 6. DOC / GHI DU LIEU GIOI HAN BO NHO ---
+void luuDuLieu() {
+    // 1. Luu khach hang
+    FILE *fKH = fopen("khachhang.bin", "wb");
+    if (fKH != NULL) {
+        fwrite(&slKH, sizeof(int), 1, fKH);
+        fwrite(dsKH, sizeof(KhachHang), slKH, fKH);
+        fclose(fKH);
+    }
+
+    // 2. Luu xe may
+    FILE *fXe = fopen("xe.bin", "wb");
+    if (fXe != NULL) {
+        fwrite(&slXe, sizeof(int), 1, fXe);
+        fwrite(dsXe, sizeof(XeMay), slXe, fXe);
+        fclose(fXe);
+    }
+
+    // 3. Luu dich vu / phu tung
+    FILE *fDV = fopen("dichvu.bin", "wb");
+    if (fDV != NULL) {
+        fwrite(&slDV, sizeof(int), 1, fDV);
+        fwrite(dsDV, sizeof(DichVuBaoDuong), slDV, fDV);
+        fclose(fDV);
+    }
+
+    // 4. Luu phieu sua chua (Xu ly rieng mang dong dsChiTiet)
+    FILE *fPhieu = fopen("phieu.bin", "wb");
+    if (fPhieu != NULL) {
+        fwrite(&slPhieu, sizeof(int), 1, fPhieu);
+        for(int i = 0; i < slPhieu; i++) {
+            fwrite(&dsPhieu[i], sizeof(PhieuSuaChua), 1, fPhieu);
+            // Ghi tiep mang dong chi tiet cua phieu nay
+            if (dsPhieu[i].soChiTiet > 0) {
+                fwrite(dsPhieu[i].dsChiTiet, sizeof(ChiTietSuaChua), dsPhieu[i].soChiTiet, fPhieu);
+            }
+        }
+        fclose(fPhieu);
+    }
+}
+
+void docDuLieu() {
+    // 1. Doc khach hang
+    FILE *fKH = fopen("khachhang.bin", "rb");
+    if (fKH != NULL) {
+        fread(&slKH, sizeof(int), 1, fKH);
+        capKH = slKH == 0 ? 10 : slKH;
+        dsKH = (KhachHang*)malloc(capKH * sizeof(KhachHang));
+        if (slKH > 0) fread(dsKH, sizeof(KhachHang), slKH, fKH);
+        fclose(fKH);
+    }
+
+    // 2. Doc xe may
+    FILE *fXe = fopen("xe.bin", "rb");
+    if (fXe != NULL) {
+        fread(&slXe, sizeof(int), 1, fXe);
+        capXe = slXe == 0 ? 10 : slXe;
+        dsXe = (XeMay*)malloc(capXe * sizeof(XeMay));
+        if (slXe > 0) fread(dsXe, sizeof(XeMay), slXe, fXe);
+        fclose(fXe);
+    }
+
+    // 3. Doc dich vu (Neu khong co file thi khoi tao mac dinh)
+    FILE *fDV = fopen("dichvu.bin", "rb");
+    if (fDV != NULL) {
+        fread(&slDV, sizeof(int), 1, fDV);
+        capDV = slDV == 0 ? 10 : slDV;
+        dsDV = (DichVuBaoDuong*)malloc(capDV * sizeof(DichVuBaoDuong));
+        if (slDV > 0) fread(dsDV, sizeof(DichVuBaoDuong), slDV, fDV);
+        fclose(fDV);
+    } else {
+        khoiTaoDuLieu(); // Goi data mac dinh neu la lan chay dau tien
+    }
+
+    // 4. Doc phieu sua chua
+    FILE *fPhieu = fopen("phieu.bin", "rb");
+    if (fPhieu != NULL) {
+        fread(&slPhieu, sizeof(int), 1, fPhieu);
+        capPhieu = slPhieu == 0 ? 10 : slPhieu;
+        dsPhieu = (PhieuSuaChua*)malloc(capPhieu * sizeof(PhieuSuaChua));
+        
+        for(int i = 0; i < slPhieu; i++) {
+            fread(&dsPhieu[i], sizeof(PhieuSuaChua), 1, fPhieu);
+            // Chu y: con tro dsChiTiet doc len tu file la dia chi rac (invalid address).
+            // Phai cap phat lai bo nho moi va doc du lieu vao do.
+            dsPhieu[i].capacityChiTiet = dsPhieu[i].soChiTiet == 0 ? 5 : dsPhieu[i].soChiTiet;
+            dsPhieu[i].dsChiTiet = (ChiTietSuaChua*)malloc(dsPhieu[i].capacityChiTiet * sizeof(ChiTietSuaChua));
+            
+            if (dsPhieu[i].soChiTiet > 0) {
+                fread(dsPhieu[i].dsChiTiet, sizeof(ChiTietSuaChua), dsPhieu[i].soChiTiet, fPhieu);
+            }
+        }
+        fclose(fPhieu);
+    }
 }
 
 // --- HAM MAIN (MENU) ---
@@ -546,7 +640,8 @@ int main() {
             case 4: sapXepLichBaoDuong(); break;
             case 5: thongKePhuTung(); break;
             case 6: traCuuThongTin(); break;
-            case 0: 
+            case 0:
+            luuDuLieu(); 
                 giaiPhongBoNho();
                 printf("Thoat chuong trinh. Tam biet.\n"); 
                 break;
