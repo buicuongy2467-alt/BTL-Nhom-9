@@ -215,13 +215,13 @@ void thanhToanVaInHoaDon() {
                     fprintf(f, "KHUYEN MAI GIAM GIA: -%ld VND\n", tienGiam);
 
                 fprintf(f, "---------------------------------------------------------------\n");
-                fprintf(f, "TONG CONG: %ld VND\n", dsPhieu[i].tongTien);
+                fprintf(f, "TONG CONG: %ld VND\n", tongThanhToan);
                 fprintf(f, "Lich hen bao duong ky sau: %02d/%02d/%04d\n",
                         dsPhieu[i].ngayHen.ngay, dsPhieu[i].ngayHen.thang,
                         dsPhieu[i].ngayHen.nam);
                 fprintf(f, "===============================================================\n");
-                fclose(f);
-                printf("=> THANH TOAN XONG!\nDa xuat hoa don ra file: '%s'\n", tenFile);
+            fclose(f);
+            printf("=> THANH TOAN XONG!\nDa xuat hoa don ra file: '%s'\n", tenFile);
             } else {
                 printf("Loi khong the tao file hoa don!\n");
             }
@@ -229,8 +229,42 @@ void thanhToanVaInHoaDon() {
         }
     }
     printf("Khong co phieu nao dang cho thanh toan cua xe: %s\n", bienSo);
-} 
+        }
+    }
 }
+
+void tinhDoanhThuThang() {
+    printf("\n================================================\n");
+    printf("         TINH DOANH THU THANG (DA TRU KHUYEN MAI)\n");
+    printf("================================================\n");
+    int thang, nam;
+    long tongDoanhThu = 0;
+    int soPhieuDaThu = 0;
+
+    printf("Nhap thang va nam can tinh (VD: 11 2026): ");
+    scanf("%d %d", &thang, &nam);
+
+    for(int i = 0; i < slPhieu; i++) {
+        // Chi tinh doanh thu cho cac phieu da thanh toan (trangThai == 1) va dung thang/nam
+        if(dsPhieu[i].trangThai == 1 && dsPhieu[i].ngayLap.thang == thang && dsPhieu[i].ngayLap.nam == nam) {
+            long tienGiam = 0;
+            
+            // Tinh toan lai muc khuyen mai ap dung cho phieu nay
+            if (dsPhieu[i].tongTien >= 1000000) {
+                tienGiam = dsPhieu[i].tongTien * 0.10;
+            } else if (dsPhieu[i].tongTien >= 500000) {
+                tienGiam = dsPhieu[i].tongTien * 0.05;
+            }
+            
+            // Doanh thu thuc te bang tong tien tru di tien giam gia
+            long doanhThuThuc = dsPhieu[i].tongTien - tienGiam;
+            tongDoanhThu += doanhThuThuc;
+            soPhieuDaThu++;
+        }
+    }
+    printf("\n=> KET QUA THONG KE THANG %02d/%04d:\n", thang, nam);
+    printf(" - So phieu da thanh toan: %d\n", soPhieuDaThu);
+    printf(" - TONG DOANH THU THUC TE: %ld VND\n", tongDoanhThu);
 }
 
 void sapXepLichBaoDuong() {
