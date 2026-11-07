@@ -337,8 +337,24 @@ void thanhToanVaInHoaDon() {
 
     for (int i=0; i<slPhieu; i++) {
         if (strcmp(dsPhieu[i].bienSo, bienSo) == 0 && dsPhieu[i].trangThai == 0) {
-            printf("Tong tien: %ld VND\n", dsPhieu[i].tongTien);
-            printf("Nhap 1 de xac nhan thanh toan (so khac de huy): ");
+            long tongTien = dsPhieu[i].tongTien;
+            long tienGiam = 0;
+            
+            // Tinh toan khuyen mai
+            if (tongTien >= 1000000) {
+                tienGiam = tongTien * 0.10;
+                printf("=> Chuc mung! Hoa don tren 1,000,000 VND, ban duoc giam 10%%.\n");
+            } else if (tongTien >= 500000) {
+                tienGiam = tongTien * 0.05;
+                printf("=> Chuc mung! Hoa don tren 500,000 VND, ban duoc giam 5%%.\n");
+            }
+            
+            long tongThanhToan = tongTien - tienGiam;
+
+            printf("Tong tien ban dau: %ld VND\n", tongTien);
+            if (tienGiam > 0) printf("So tien duoc giam: %ld VND\n", tienGiam);
+             printf("SO TIEN CAN THANH TOAN: %ld VND\n", tongThanhToan);
+             printf("Nhap 1 de xac nhan thanh toan (so khac de huy): ");
             int xacNhan; scanf("%d", &xacNhan);
             if(xacNhan != 1) {
                 if (dsPhieu[i].tonKhoDaTru) {
@@ -413,7 +429,12 @@ void thanhToanVaInHoaDon() {
                     fprintf(f, "%-4d | %-30s | %-5d | %11ld VND\n", j+1,
                             dsDV[id].tenPhuTung, dsPhieu[i].dsChiTiet[j].soLuong,
                             dsPhieu[i].dsChiTiet[j].thanhTien);
-                }
+
+                fprintf(f, "---------------------------------------------------------------\n");
+                fprintf(f, "TONG TIEN BAN DAU: %ld VND\n", tongTien);
+                if (tienGiam > 0) {
+                    fprintf(f, "KHUYEN MAI GIAM GIA: -%ld VND\n", tienGiam);
+
                 fprintf(f, "---------------------------------------------------------------\n");
                 fprintf(f, "TONG CONG: %ld VND\n", dsPhieu[i].tongTien);
                 fprintf(f, "Lich hen bao duong ky sau: %02d/%02d/%04d\n",
@@ -429,6 +450,8 @@ void thanhToanVaInHoaDon() {
         }
     }
     printf("Khong co phieu nao dang cho thanh toan cua xe: %s\n", bienSo);
+} 
+}
 }
 
 // --- 4. THUAT TOAN SAP XEP ---
@@ -658,7 +681,15 @@ void tinhDoanhThuThang() {
     printf(" - So phieu da thanh toan: %d\n", soPhieuDaThu);
     printf(" - TONG DOANH THU        : %ld VND\n", tongDoanhThu);
 }
-
+void khuyenMaiChoDonHang() {
+    printf("\n================================================\n");
+    printf("         CHUONG TRINH KHUYEN MAI HIEN TAI\n");
+    printf("================================================\n");
+    printf("1. Giam 5%% cho tong hoa don tu 500,000 VND tro len.\n");
+    printf("2. Giam 10%% cho tong hoa don tu 1,000,000 VND tro len.\n");
+    printf("------------------------------------------------\n");
+    printf("=> Chiet khau se duoc tu dong ap dung khi thanh toan!\n");
+)
 // --- HAM MAIN (MENU) ---
 int main() {
     khoiTaoDuLieu();
@@ -675,8 +706,8 @@ int main() {
         puts("  4. Xem lich hen bao duong");
         puts("  5. Thong ke dich vu / phu tung");
         puts("  6. Tra cuu khach hang / xe");
+        puts("  7. Khuyen mai cho don hang");
          if (quyen == 1) {
-            puts("  5. [Ong chu] Thong ke ton kho dich vu / phu tung");
             puts("  8. [Ong chu] Tinh tong doanh thu thang");
         }
         puts("  0. Thoat");
@@ -689,12 +720,9 @@ int main() {
             case 2: lapPhieuDichVu(); break;
             case 3: thanhToanVaInHoaDon(); break;
             case 4: sapXepLichBaoDuong(); break;
-            case 5:
-            if (quyen == 1) thongKePhuTung(); 
-                else printf("=> Ban khong co quyen xem ton kho!\n");
-                break;
-            case 6: thongKePhuTung(); break;
-            case 7: traCuuThongTin(); break;
+            case 5: thongKePhuTung(); break;
+            case 6: traCuuThongTin(); break;
+            case 7: khuyenMaiChoDonHang(); break;
             case 8:
             	if (quyen == 1) tinhDoanhThuThang();
                 else printf("=> Ban khong co quyen xem doanh thu!\n");
