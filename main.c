@@ -689,7 +689,7 @@ void khuyenMaiChoDonHang() {
     printf("2. Giam 10%% cho tong hoa don tu 1,000,000 VND tro len.\n");
     printf("------------------------------------------------\n");
     printf("=> Chiet khau se duoc tu dong ap dung khi thanh toan!\n");
-)
+}
 // --- HAM MAIN (MENU) ---
 int main() {
     khoiTaoDuLieu();
