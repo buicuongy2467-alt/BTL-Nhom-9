@@ -39,8 +39,20 @@ void tinhDoanhThuThang() {
     scanf("%d %d", &thang, &nam);
 
     for(int i = 0; i < slPhieu; i++) {
+        // Chi tinh doanh thu cho cac phieu da thanh toan (trangThai == 1) va dung thang/nam
         if(dsPhieu[i].trangThai == 1 && dsPhieu[i].ngayLap.thang == thang && dsPhieu[i].ngayLap.nam == nam) {
-            tongDoanhThu += dsPhieu[i].tongTien;
+            long tienGiam = 0;
+            
+            // Tinh toan lai muc khuyen mai ap dung cho phieu nay
+            if (dsPhieu[i].tongTien >= 1000000) {
+                tienGiam = dsPhieu[i].tongTien * 0.10;
+            } else if (dsPhieu[i].tongTien >= 500000) {
+                tienGiam = dsPhieu[i].tongTien * 0.05;
+            }
+            
+            // Doanh thu thuc te bang tong tien tru di tien giam gia
+            long doanhThuThuc = dsPhieu[i].tongTien - tienGiam;
+            tongDoanhThu += doanhThuThuc;
             soPhieuDaThu++;
         }
     }
