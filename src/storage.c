@@ -72,52 +72,74 @@ void docDuLieu() {
     FILE *fKH = fopen("khachhang.bin", "rb");
     if (fKH != NULL) {
         fread(&slKH, sizeof(int), 1, fKH);
+        if (slKH < 0 || slKH > 100000) slKH = 0; // Bo loc chong tran bo nho
         capKH = slKH == 0 ? 10 : slKH;
         dsKH = (KhachHang*)malloc(capKH * sizeof(KhachHang));
         if (slKH > 0) fread(dsKH, sizeof(KhachHang), slKH, fKH);
         fclose(fKH);
+        printf(" Da nap thanh cong %d khach hang.\n", slKH);
+    } else {
+        printf(" Khong tim thay khachhang.bin. Khoi tao vung nho trong.\n");
+        capKH = 10; dsKH = (KhachHang*)malloc(capKH * sizeof(KhachHang));
     }
 
     // 2. Doc xe may
     FILE *fXe = fopen("xe.bin", "rb");
     if (fXe != NULL) {
         fread(&slXe, sizeof(int), 1, fXe);
+        if (slXe < 0 || slXe > 100000) slXe = 0;
         capXe = slXe == 0 ? 10 : slXe;
         dsXe = (XeMay*)malloc(capXe * sizeof(XeMay));
         if (slXe > 0) fread(dsXe, sizeof(XeMay), slXe, fXe);
         fclose(fXe);
+        printf(" Da nap thanh cong %d xe may.\n", slXe);
+    } else {
+        printf(" Khong tim thay xe.bin. Khoi tao vung nho trong.\n");
+        capXe = 10; dsXe = (XeMay*)malloc(capXe * sizeof(XeMay));
     }
 
-    // 3. Doc dich vu (Neu khong co file thi khoi tao mac dinh)
+    // 3. Doc dich vu
     FILE *fDV = fopen("dichvu.bin", "rb");
     if (fDV != NULL) {
         fread(&slDV, sizeof(int), 1, fDV);
+        if (slDV < 0 || slDV > 100000) slDV = 0;
         capDV = slDV == 0 ? 10 : slDV;
         dsDV = (DichVuBaoDuong*)malloc(capDV * sizeof(DichVuBaoDuong));
         if (slDV > 0) fread(dsDV, sizeof(DichVuBaoDuong), slDV, fDV);
         fclose(fDV);
+        printf(" Da nap thanh cong %d dich vu/phu tung.\n", slDV);
     } else {
-        khoiTaoDuLieu(); // Goi data mac dinh neu la lan chay dau tien
+        printf(" Khong tim thay dichvu.bin. Tu dong tao du lieu mac dinh...\n");
+        khoiTaoDuLieu();
     }
 
     // 4. Doc phieu sua chua
     FILE *fPhieu = fopen("phieu.bin", "rb");
     if (fPhieu != NULL) {
         fread(&slPhieu, sizeof(int), 1, fPhieu);
+        if (slPhieu < 0 || slPhieu > 100000) slPhieu = 0;
         capPhieu = slPhieu == 0 ? 10 : slPhieu;
         dsPhieu = (PhieuSuaChua*)malloc(capPhieu * sizeof(PhieuSuaChua));
         
         for(int i = 0; i < slPhieu; i++) {
             fread(&dsPhieu[i], sizeof(PhieuSuaChua), 1, fPhieu);
-            // Chu y: con tro dsChiTiet doc len tu file la dia chi rac (invalid address).
-            // Phai cap phat lai bo nho moi va doc du lieu vao do.
-            dsPhieu[i].capacityChiTiet = dsPhieu[i].soChiTiet == 0 ? 5 : dsPhieu[i].soChiTiet;
-            dsPhieu[i].dsChiTiet = (ChiTietSuaChua*)malloc(dsPhieu[i].capacityChiTiet * sizeof(ChiTietSuaChua));
             
-            if (dsPhieu[i].soChiTiet > 0) {
+            // Xoa cac con tro mang dia chi rac doc tu file
+            dsPhieu[i].dsChiTiet = NULL; 
+            dsPhieu[i].capacityChiTiet = dsPhieu[i].soChiTiet == 0 ? 5 : dsPhieu[i].soChiTiet;
+            
+            if (dsPhieu[i].capacityChiTiet > 0) {
+                dsPhieu[i].dsChiTiet = (ChiTietSuaChua*)malloc(dsPhieu[i].capacityChiTiet * sizeof(ChiTietSuaChua));
+            }
+            
+            if (dsPhieu[i].soChiTiet > 0 && dsPhieu[i].dsChiTiet != NULL) {
                 fread(dsPhieu[i].dsChiTiet, sizeof(ChiTietSuaChua), dsPhieu[i].soChiTiet, fPhieu);
             }
         }
         fclose(fPhieu);
+        printf(" Da nap thanh cong %d phieu sua chua.\n", slPhieu);
+    } else {
+        printf(" Khong tim thay phieu.bin. Khoi tao vung nho trong.\n");
+        capPhieu = 10; dsPhieu = (PhieuSuaChua*)malloc(capPhieu * sizeof(PhieuSuaChua));
     }
 }
